@@ -11,7 +11,7 @@ bool StarMatrix::init()
 	{
 		for (size_t j = 0; j < COLS; j++)
 		{
-			int type = 1;// random(1, 5);
+			int type = random(1, 5);
 			log("%d Row %d Col tile type is %d", i, j, type);
 			Star* temp = Star::create(type);
 			const Size& s = temp->getContentSize();
@@ -56,7 +56,6 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 	}
 
 	Star* temp = matrix.at(key);
-	temp->setIsActive(true);
 	//检测有多少个相同的星星，要同时处于选中状态
 	checkSameStar(temp->type, temp->row, temp->col);
 	return true;
@@ -64,7 +63,32 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 
 void StarMatrix::checkSameStar(int type, int row, int col)
 {
-	//PathNode = new
+	//用递归来做
+	log("Check :  Row %d, Col %d", row, col);
+	//退出条件
+	if (row >= ROWS || row < 0 || col >= COLS || col < 0)
+	{
+		return;
+	}
+
+	auto it = matrix.find(Value(row).asString() + "_" + Value(col).asString());
+	auto s = it->second;
+	if (it == matrix.end() || s->getIsAvctive() == true || s->type != type)
+	{
+		return;
+	}
+	else
+	{
+		s->setIsActive(true);
+	}
+	//先检测向上的点
+	checkSameStar(type, row + 1, col);
+	//再检测向下的点
+	checkSameStar(type, row - 1, col);
+	//然后检测向左的点
+	checkSameStar(type, row, col - 1);
+	//最后检测向右的点
+	checkSameStar(type, row, col + 1);
 }
 
 int StarMatrix::getRow(float y)
