@@ -162,6 +162,15 @@ bool Star::getIsAvctive()
 	return mIsActive;
 }
 
+
+void Star::destroy()
+{
+	if (this->getParent() != NULL)
+	{
+		this->getParent()->removeChild(this, true);
+	}
+}
+
 void Star::update(float dt)
 {
 	mIsActive ^= 1;

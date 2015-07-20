@@ -19,6 +19,8 @@ public:
 	bool getIsAvctive();
 
 	void update(float dt);
+
+	void destroy();
 private:
 	bool mIsActive;
 	//SpriteFrame* normal;

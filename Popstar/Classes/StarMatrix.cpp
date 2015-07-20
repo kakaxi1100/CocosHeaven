@@ -56,8 +56,27 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 	}
 
 	Star* temp = matrix.at(key);
-	//检测有多少个相同的星星，要同时处于选中状态
-	checkSameStar(temp->type, temp->row, temp->col);
+	if (temp->getIsAvctive() == false)//假如是未选中状态的方块则检测有多少颗星星
+	{
+		//先消除之前处于选中状态的星星
+		setAllStarToNormal();
+		selectStars.clear();
+		//检测有多少个相同的星星，要同时处于选中状态
+		checkSameStar(temp->type, temp->row, temp->col);
+	}
+	else//假如是选中状态的方块，则消除方块。
+	{
+		if (selectStars.size() > 1)//假如相关连的星星大于1个
+		{
+			auto it = selectStars.begin();
+			while ( it != selectStars.end())
+			{
+				auto earseStar = *it;
+				earseStar->destroy();
+				it = selectStars.erase(it);
+			}
+		}
+	}
 	return true;
 }
 
@@ -80,6 +99,7 @@ void StarMatrix::checkSameStar(int type, int row, int col)
 	else
 	{
 		s->setIsActive(true);
+		selectStars.pushBack(s);
 	}
 	//先检测向上的点
 	checkSameStar(type, row + 1, col);
@@ -89,6 +109,17 @@ void StarMatrix::checkSameStar(int type, int row, int col)
 	checkSameStar(type, row, col - 1);
 	//最后检测向右的点
 	checkSameStar(type, row, col + 1);
+}
+
+void StarMatrix::setAllStarToNormal()
+{
+	for (auto p : matrix)
+	{
+		if (p.second->getIsAvctive() == true)
+		{
+			p.second->setIsActive(false);
+		}
+	}
 }
 
 int StarMatrix::getRow(float y)
