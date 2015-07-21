@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 
 #include "Star.h"
+#include "StarColumn.h"
 #include "PathNode.h"
 
 USING_NS_CC;
@@ -18,12 +19,13 @@ public:
 	CREATE_FUNC(StarMatrix);
 	bool onTouchBegan(Touch* touch, Event* event);
 private:
-	Vector<Star*> selectStars;
-	Map<std::string, Star*> matrix;
+	Map<int, StarColumn*> matrix;
+
 	int getRow(float x);
 	int getCol(float y);
 
 	void checkSameStar(int type, int row, int col);
+	void popStars();
 	void setAllStarToNormal();
 
 	int starW;

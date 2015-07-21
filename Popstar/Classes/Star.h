@@ -15,6 +15,9 @@ public:
 	int col;
 	int row;
 
+	int newCol;
+	int newRow;
+
 	void setIsActive(bool value);
 	bool getIsAvctive();
 
