@@ -178,7 +178,12 @@ void Star::moveStar()
 	if (col != newCol || row != newRow)
 	{
 		auto size = this->getContentSize();
-		setPosition(newCol*size.width + size.width / 2, newRow * size.height + size.height / 2);
+		float posX = newCol*size.width + size.width / 2;
+		float posY = newRow * size.height + size.height / 2;
+		//setPosition(posX, posY);
+		MoveTo* moveTo = MoveTo::create(0.3, Point(posX, posY));
+		this->runAction(moveTo);
+
 		col = newCol;
 		row = newRow;
 	}
