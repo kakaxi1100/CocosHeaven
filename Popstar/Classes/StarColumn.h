@@ -13,8 +13,15 @@ public:
 	bool init();
 	void pushStar(Star* s);
 	Star* getStarByIndex(int i);
+	bool eraseStar(Star* s);
+	bool eraseStarByIndex(int i);
 	size_t getSize();
 	void onExit();
+	void setColNum(int value);
+	int getColNum();
 private:
 	Vector<Star*> colStars;
+	void changeStarsRow();
+	void changeStarsCol();
+	int mColNum;
 };

@@ -7,8 +7,6 @@ bool StarColumn::init()
 		return false;
 	}
 
-
-
 	return true;
 }
 
@@ -41,3 +39,51 @@ Star* StarColumn::getStarByIndex(int i)
 	return colStars.at(i);
 }
 
+bool StarColumn::eraseStar(Star* s)
+{
+	colStars.eraseObject(s, false);
+	changeStarsRow();
+	return true;
+}
+
+bool StarColumn::eraseStarByIndex(int i)
+{
+	colStars.erase(i);
+	changeStarsRow();
+	return true;
+}
+
+void StarColumn::changeStarsRow()
+{
+	for (size_t i = 0; i < colStars.size(); i++)
+	{
+		auto s = getStarByIndex(i);
+		if (s != NULL)
+		{
+			s->newRow = i;
+		}
+	}
+}
+
+void StarColumn::changeStarsCol()
+{
+	for (size_t i = 0; i < colStars.size(); i++)
+	{
+		auto s = getStarByIndex(i);
+		if (s != NULL)
+		{
+			s->newCol = mColNum;
+		}
+	}
+}
+
+void StarColumn::setColNum(int value)
+{
+	mColNum = value;
+	changeStarsCol();
+}
+
+int StarColumn::getColNum()
+{
+	return mColNum;
+}

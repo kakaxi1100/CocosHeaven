@@ -7,12 +7,23 @@ bool StarMatrix::init()
 		return false;
 	}
 
+	popStarCount = 0;
+	starH = starW = 0;
+
+	//初始化
 	for (size_t i = 0; i < COLS; i++)
 	{
 		StarColumn* starColumn = StarColumn::create();
 		for (size_t j = 0; j < ROWS; j++)
 		{
-			int type = random(1, 5);
+			int type;
+			if (i != 5)
+			{
+				type = random(1, 5);
+			}
+			else{
+				type = 1;
+			}
 			log("%d Row %d Col tile type is %d", j, i, type);
 			Star* temp = Star::create(type);
 			const Size& s = temp->getContentSize();
@@ -20,17 +31,18 @@ bool StarMatrix::init()
 			temp->newCol = temp->col = i;
 			temp->setPosition(i*s.width + s.width / 2, j * s.height + s.height / 2);
 			starColumn->pushStar(temp);
+			starColumn->setColNum(i);
 			addChild(temp);
 		}
-		matrix.insert(i, starColumn);
+		matrix.pushBack(starColumn);
 	}
 
-	if (matrix.find(0) != matrix.end())
+	if (matrix.size() > 0)
 	{
-		auto p = matrix.at(0);
-		if (p->getSize() > 0)
+		auto sc = matrix.at(0);
+		if (sc->getSize() > 0)
 		{
-			const Size& t = p->getStarByIndex(0)->getContentSize();
+			const Size& t = sc->getStarByIndex(0)->getContentSize();
 			starH = t.height;
 			starW = t.width;
 		}
@@ -55,7 +67,7 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 	int c = getCol(pos.x);
 	log("Select Row %d, Col %d", r, c);
 
-	if (matrix.find(c) == matrix.end())//假如没有找到此列
+	if (matrix.size() < c + 1)//假如没有找到此列
 	{
 		return false;
 	}
@@ -68,32 +80,66 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 	}
 
 	//取得找到的星星
-
 	Star* temp= matrix.at(c)->getStarByIndex(r);
 	if (temp->getIsAvctive() == false)
 	{
+		popStarCount = 0;
 		setAllStarToNormal();
 		checkSameStar(temp->type, temp->row, temp->col);
 	}
-	else//否则消除当前选中的方块
+	else//否则消除当前选中的方块re
 	{
-
+		if (popStarCount > 1)
+		{
+			popStars();
+			moveStars();
+		}
 	}
 	return true;
 }
 
+//每个星星都有个新的坐标，为播放移动动画做准备
 void StarMatrix::popStars()
 {
 	//检查每列
-	for (auto p : matrix)
+	for (int i = 0; i < matrix.size(); i++)
 	{
-		auto sc = p.second;
+		auto sc = matrix.at(i);
+		//检查每行
+		for (size_t j = 0; j < sc->getSize(); j++)
+		{
+			auto s = sc->getStarByIndex(j);
+			if (s->getIsAvctive() == true)
+			{
+				//删掉要消除的星星
+				s->destroy();
+				sc->eraseStarByIndex(j);
+				j--;
+			}
+		}
+
+		//再检查每列
+		if (sc->getSize() == 0)
+		{
+			matrix.eraseObject(sc);//注意matrix.size改变了，对应的列也改变了
+			i--;
+			//更改每列的列值
+			for (int k = 0; k < matrix.size(); k++)
+			{
+				matrix.at(k)->setColNum(k);
+			}
+		}
+	}
+}
+
+void StarMatrix::moveStars()
+{
+	for (auto sc : matrix)
+	{
 		for (size_t i = 0; i < sc->getSize(); i++)
 		{
-			if (sc->getStarByIndex(i)->getIsAvctive() == true)
-			{
-
-			}
+			auto s =  sc->getStarByIndex(i);
+			s->moveStar();
 		}
 	}
 }
@@ -103,7 +149,7 @@ void StarMatrix::checkSameStar(int type, int row, int col)
 	log("Check : Row %d, Col %d", row, col);
 	//退出条件
 	//1、是否在框内、是否有此列
-	if (row >= ROWS || row < 0 || col >= COLS || col < 0 || matrix.find(col) == matrix.end())
+	if (row >= ROWS || row < 0 || col >= COLS || col < 0 || matrix.size() < col + 1)
 	{
 		return;
 	}
@@ -115,6 +161,7 @@ void StarMatrix::checkSameStar(int type, int row, int col)
 	}
 
 	s->setIsActive(true);
+	popStarCount++;
 
 	//先检测向上的点
 	checkSameStar(type, row + 1, col);
@@ -128,9 +175,8 @@ void StarMatrix::checkSameStar(int type, int row, int col)
 
 void StarMatrix::setAllStarToNormal()
 {
-	for (auto p : matrix)
+	for (auto sc : matrix)
 	{
-		auto sc = p.second;
 		for (size_t i = 0; i < sc->getSize(); i++)
 		{
 			auto s = sc->getStarByIndex(i);

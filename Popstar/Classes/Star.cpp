@@ -91,6 +91,8 @@ bool Star::init(int pType)
 	//setTexture("red.png");
 	//setIsActive(true);
 	//this->scheduleUpdate();
+
+	return true;
 }
 void Star::setIsActive(bool value)
 {
@@ -168,6 +170,17 @@ void Star::destroy()
 	if (this->getParent() != NULL)
 	{
 		this->getParent()->removeChild(this, true);
+	}
+}
+
+void Star::moveStar()
+{
+	if (col != newCol || row != newRow)
+	{
+		auto size = this->getContentSize();
+		setPosition(newCol*size.width + size.width / 2, newRow * size.height + size.height / 2);
+		col = newCol;
+		row = newRow;
 	}
 }
 

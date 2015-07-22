@@ -19,15 +19,18 @@ public:
 	CREATE_FUNC(StarMatrix);
 	bool onTouchBegan(Touch* touch, Event* event);
 private:
-	Map<int, StarColumn*> matrix;
-
+	//Map<int, StarColumn*> matrix;
+	Vector<StarColumn*> matrix;
 	int getRow(float x);
 	int getCol(float y);
 
 	void checkSameStar(int type, int row, int col);
 	void popStars();
+	void moveStars();
 	void setAllStarToNormal();
 
 	int starW;
 	int starH;
+
+	int popStarCount;
 };
