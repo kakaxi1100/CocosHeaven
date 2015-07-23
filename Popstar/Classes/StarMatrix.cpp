@@ -7,7 +7,6 @@ bool StarMatrix::init()
 		return false;
 	}
 
-	popStarCount = 0;
 	starH = starW = 0;
 
 	//初始化
@@ -28,8 +27,10 @@ bool StarMatrix::init()
 			Star* temp = Star::create(type);
 			const Size& s = temp->getContentSize();
 			temp->newRow = temp->row = j;
-			temp->newCol = temp->col = i;
-			temp->setPosition(i*s.width + s.width / 2, j * s.height + s.height / 2);
+			temp->newCol =temp->col = i;
+			//用来做进场动画
+			//temp->setPosition(i*s.width + s.width / 2, j * s.height + s.height / 2);
+			temp->setPosition(convertToWindowSpace(Point(i*s.width + s.width / 2, s.height / 2)));
 			starColumn->pushStar(temp);
 			starColumn->setColNum(i);
 			addChild(temp);
@@ -83,13 +84,18 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 	Star* temp= matrix.at(c)->getStarByIndex(r);
 	if (temp->getIsAvctive() == false)
 	{
-		popStarCount = 0;
+		selectStar.clear();
 		setAllStarToNormal();
 		checkSameStar(temp->type, temp->row, temp->col);
+		//让选中的星星跳一下
+		for (auto s : selectStar)
+		{
+			s->jumpStar();
+		}
 	}
 	else//否则消除当前选中的方块re
 	{
-		if (popStarCount > 1)
+		if (selectStar.size() > 1)
 		{
 			popStars();
 			moveStars();
@@ -161,7 +167,7 @@ void StarMatrix::checkSameStar(int type, int row, int col)
 	}
 
 	s->setIsActive(true);
-	popStarCount++;
+	selectStar.pushBack(s);
 
 	//先检测向上的点
 	checkSameStar(type, row + 1, col);

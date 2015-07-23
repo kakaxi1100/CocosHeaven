@@ -18,9 +18,12 @@ public:
 	virtual bool init();
 	CREATE_FUNC(StarMatrix);
 	bool onTouchBegan(Touch* touch, Event* event);
+	void update(float dt);
 private:
-	//Map<int, StarColumn*> matrix;
 	Vector<StarColumn*> matrix;
+
+	Vector<Star*> selectStar;
+
 	int getRow(float x);
 	int getCol(float y);
 
@@ -31,6 +34,4 @@ private:
 
 	int starW;
 	int starH;
-
-	int popStarCount;
 };

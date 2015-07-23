@@ -25,6 +25,7 @@ public:
 
 	void destroy();
 	void moveStar();
+	void jumpStar();
 private:
 	bool mIsActive;
 	//SpriteFrame* normal;
