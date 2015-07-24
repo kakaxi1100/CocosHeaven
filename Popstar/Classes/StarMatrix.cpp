@@ -30,7 +30,7 @@ bool StarMatrix::init()
 			temp->newRow = temp->row = j;
 			temp->newCol =temp->col = i;
 			//用来做进场动画
-			temp->delay = j * 30 + i*random(0, 5);
+			temp->delay = j * 10 + i*random(0, 5);
 			//temp->setPosition(i*s.width + s.width / 2, j * s.height + s.height / 2);
 			temp->setPosition(convertToWindowSpace(Point(i*s.width + s.width / 2, -s.height / 2)));
 			starColumn->pushStar(temp);
