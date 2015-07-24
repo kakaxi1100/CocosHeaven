@@ -55,7 +55,7 @@ bool StarColumn::eraseStarByIndex(int i)
 
 void StarColumn::changeStarsRow()
 {
-	for (size_t i = 0; i < colStars.size(); i++)
+	for (int i = 0; i < colStars.size(); i++)
 	{
 		auto s = getStarByIndex(i);
 		if (s != NULL)
@@ -67,7 +67,7 @@ void StarColumn::changeStarsRow()
 
 void StarColumn::changeStarsCol()
 {
-	for (size_t i = 0; i < colStars.size(); i++)
+	for (int i = 0; i < colStars.size(); i++)
 	{
 		auto s = getStarByIndex(i);
 		if (s != NULL)

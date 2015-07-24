@@ -26,11 +26,13 @@ bool StarMatrix::init()
 			log("%d Row %d Col tile type is %d", j, i, type);
 			Star* temp = Star::create(type);
 			const Size& s = temp->getContentSize();
+			temp->speedX = temp->speedY = 20;
 			temp->newRow = temp->row = j;
 			temp->newCol =temp->col = i;
 			//用来做进场动画
+			temp->delay = j * 30 + i*random(0, 5);
 			//temp->setPosition(i*s.width + s.width / 2, j * s.height + s.height / 2);
-			temp->setPosition(convertToWindowSpace(Point(i*s.width + s.width / 2, s.height / 2)));
+			temp->setPosition(convertToWindowSpace(Point(i*s.width + s.width / 2, -s.height / 2)));
 			starColumn->pushStar(temp);
 			starColumn->setColNum(i);
 			addChild(temp);
@@ -57,6 +59,8 @@ bool StarMatrix::init()
 	EventListenerTouchOneByOne* listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(StarMatrix::onTouchBegan, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
+	//this->scheduleUpdate();
 	return true;
 }
 
@@ -98,6 +102,11 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 		if (selectStar.size() > 1)
 		{
 			popStars();
+			//开始消除星星
+			for (auto s : selectStar)
+			{
+				s->destroy();
+			}
 			moveStars();
 		}
 	}
@@ -117,8 +126,6 @@ void StarMatrix::popStars()
 			auto s = sc->getStarByIndex(j);
 			if (s->getIsAvctive() == true)
 			{
-				//删掉要消除的星星
-				s->destroy();
 				sc->eraseStarByIndex(j);
 				j--;
 			}
@@ -202,4 +209,9 @@ int StarMatrix::getRow(float y)
 int StarMatrix::getCol(float x)
 {
 	return static_cast<int>(x/starW);
+}
+
+void StarMatrix::update(float dt)
+{
+	
 }
