@@ -7,35 +7,49 @@ bool StarMatrix::init()
 		return false;
 	}
 
-	starH = starW = 0;
+	if (!gameAgain())
+	{
+		return false;
+	}
 
+	EventListenerTouchOneByOne* listener = EventListenerTouchOneByOne::create();
+	listener->onTouchBegan = CC_CALLBACK_2(StarMatrix::onTouchBegan, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
+	this->scheduleUpdate();
+	return true;
+}
+
+bool StarMatrix::gameAgain()
+{
+	starH = starW = 0;
+	startMoveRow = startMoveCol = false;
+	isCheckOver = false;
+	matrix.clear();
+	selectStar.clear();
+
+	removeAllChildren();
 	//初始化
 	for (size_t i = 0; i < COLS; i++)
 	{
 		StarColumn* starColumn = StarColumn::create();
 		for (size_t j = 0; j < ROWS; j++)
 		{
-			int type;
-			if (i != 5)
-			{
-				type = random(1, 5);
-			}
-			else{
-				type = 1;
-			}
+			int type = random(1, 5);
+
 			log("%d Row %d Col tile type is %d", j, i, type);
 			Star* temp = Star::create(type);
 			const Size& s = temp->getContentSize();
-			temp->speedX = temp->speedY = 20;
 			temp->newRow = temp->row = j;
-			temp->newCol =temp->col = i;
+			temp->newCol = temp->col = i;
 			//用来做进场动画
-			temp->delay = j * 10 + i*random(0, 5);
+			temp->delay = j * 30 + i*random(0, 5);
 			//temp->setPosition(i*s.width + s.width / 2, j * s.height + s.height / 2);
 			temp->setPosition(convertToWindowSpace(Point(i*s.width + s.width / 2, -s.height / 2)));
 			starColumn->pushStar(temp);
 			starColumn->setColNum(i);
 			addChild(temp);
+			temp->starEnter();
 		}
 		matrix.pushBack(starColumn);
 	}
@@ -55,14 +69,9 @@ bool StarMatrix::init()
 			return false;
 		}
 	}
-
-	EventListenerTouchOneByOne* listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(StarMatrix::onTouchBegan, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-
-	//this->scheduleUpdate();
 	return true;
 }
+
 
 bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 {
@@ -88,8 +97,8 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 	Star* temp= matrix.at(c)->getStarByIndex(r);
 	if (temp->getIsAvctive() == false)
 	{
+		setSelectStarToNormal();
 		selectStar.clear();
-		setAllStarToNormal();
 		checkSameStar(temp->type, temp->row, temp->col);
 		//让选中的星星跳一下
 		for (auto s : selectStar)
@@ -106,8 +115,10 @@ bool StarMatrix::onTouchBegan(Touch* touch, Event* event)
 			for (auto s : selectStar)
 			{
 				s->destroy();
+				//selectStar.eraseObject(s);
 			}
-			moveStars();
+			selectStar.clear();
+			startToMove();
 		}
 	}
 	return true;
@@ -144,15 +155,66 @@ void StarMatrix::popStars()
 		}
 	}
 }
-
-void StarMatrix::moveStars()
+void StarMatrix::startToMove()
 {
 	for (auto sc : matrix)
 	{
 		for (size_t i = 0; i < sc->getSize(); i++)
 		{
-			auto s =  sc->getStarByIndex(i);
+			auto s = sc->getStarByIndex(i);
 			s->moveStar();
+		}
+	}
+
+	startMoveRow = true;
+	startMoveCol = false;
+}
+
+void StarMatrix::moveStarsRow()
+{
+	if (startMoveRow == true)
+	{
+		startMoveCol = true;
+		for (auto sc : matrix)
+		{
+			for (size_t i = 0; i < sc->getSize(); i++)
+			{
+				auto s = sc->getStarByIndex(i);
+				if (s->isMoveRow == true)
+				{
+					startMoveCol = false;
+					s->moveRow(0);
+				}
+			}
+		}
+		if (startMoveCol == true)
+		{
+			startMoveRow = false;
+		}
+	}
+}
+
+void StarMatrix::moveStarsCol()
+{
+	if (startMoveCol == true)
+	{
+		bool over = true;
+		for (auto sc : matrix)
+		{
+			for (size_t i = 0; i < sc->getSize(); i++)
+			{
+				auto s = sc->getStarByIndex(i);
+				if (s->isMoveCol == true)
+				{
+					over = false;
+					s->moveCol(0);
+				}
+			}
+		}
+		if (over == true)
+		{
+			startMoveRow = startMoveCol = false;
+			isCheckOver = true;
 		}
 	}
 }
@@ -186,8 +248,12 @@ void StarMatrix::checkSameStar(int type, int row, int col)
 	checkSameStar(type, row, col + 1);
 }
 
-void StarMatrix::setAllStarToNormal()
+void StarMatrix::setSelectStarToNormal()
 {
+	for (auto s : selectStar)
+	{
+		s->setIsActive(false);
+	}
 	for (auto sc : matrix)
 	{
 		for (size_t i = 0; i < sc->getSize(); i++)
@@ -211,7 +277,57 @@ int StarMatrix::getCol(float x)
 	return static_cast<int>(x/starW);
 }
 
+bool StarMatrix::checkOver()
+{
+	for (ssize_t i = 0; i < matrix.size(); i++)
+	{
+		auto sc = matrix.at(i);
+		for (size_t j = 0; j < sc->getSize(); j++)
+		{
+			auto s = sc->getStarByIndex(j);
+			size_t  tempj = j;
+			tempj++;
+			//检查上边
+			if (sc->getSize() > tempj)
+			{
+				auto temps = sc->getStarByIndex(tempj);
+				if (s->type == temps->type)
+				{
+					return false;
+				}
+			}
+			//检查右边
+			ssize_t tempi = i;
+			tempi++;
+			if (matrix.size() > tempi)
+			{
+				auto tempsc = matrix.at(tempi);
+				if (sc->getSize() > tempj)
+				{
+					auto temps = sc->getStarByIndex(tempj);
+					if (s->type == temps->type)
+					{
+						return false;
+					}
+				}
+			}
+		}
+	}
+	log("Game Over!");
+	return true;
+}
+
 void StarMatrix::update(float dt)
 {
-	
+	moveStarsRow();
+	moveStarsCol();
+
+	if (isCheckOver == true)
+	{ 
+		isCheckOver = false;
+		if (checkOver())
+		{
+			gameAgain();
+		}
+	}
 }

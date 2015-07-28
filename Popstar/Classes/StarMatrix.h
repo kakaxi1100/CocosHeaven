@@ -29,8 +29,17 @@ private:
 
 	void checkSameStar(int type, int row, int col);
 	void popStars();
-	void moveStars();
-	void setAllStarToNormal();
+	void moveStarsRow();
+	void moveStarsCol();
+	void startToMove();
+	void setSelectStarToNormal();
+
+	bool checkOver();
+	bool gameAgain();
+
+	bool startMoveRow;
+	bool startMoveCol;
+	bool isCheckOver;
 
 	int starW;
 	int starH;

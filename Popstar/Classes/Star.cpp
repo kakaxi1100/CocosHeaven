@@ -27,8 +27,9 @@ bool Star::init(int pType)
 	col = 0;
 	row = 0;
 	delay = -1;
-	isMoveRowOver = isMoveColOver = false;
-
+	speedX = speedY = 20;
+	aX = aY = 1;
+	isMoveRow = isMoveCol = false;
 	switch (type)
 	{
 	case 1:
@@ -56,9 +57,7 @@ bool Star::init(int pType)
 	}
 
 	setIsActive(false);
-
-	this->scheduleUpdate();
-
+	
 	return true;
 }
 void Star::setIsActive(bool value)
@@ -89,17 +88,57 @@ void Star::destroy()
 
 void Star::moveStar()
 {
-	this->schedule(schedule_selector(Star::moveRow));
-	this->schedule(schedule_selector(Star::moveCol));
+	speedX = speedY = 20;
+	aX = aY = 1;
+	auto size = this->getContentSize();
+	destY = newRow * size.height + size.height / 2;
+	destX = newCol*size.width + size.width / 2;
+	isMoveRow = true;
+	isMoveCol = false;
+	//this->schedule(schedule_selector(Star::moveRow));
+	//this->schedule(schedule_selector(Star::moveCol));
 }
 
 void Star::moveRow(float dt)
 {
-	
+	speedY -= aY;
+	if (speedY < -20)
+	{
+		speedY = -20;
+	}
+
+	if (getPositionY() > destY)
+	{
+		setPositionY(getPositionY() + speedY);
+	}
+	else
+	{
+		setPositionY(destY);
+		row = newRow;
+		isMoveRow = false;
+		isMoveCol = true;
+		//this->unschedule(schedule_selector(Star::moveRow));
+	}
 }
 void Star::moveCol(float dt)
 {
+	speedX -= aX;
+	if (speedX < -20)
+	{
+		speedX = -20;
+	}
 
+	if (getPositionX() > destX)
+	{
+		setPositionX(getPositionX() + speedX);
+	}
+	else
+	{
+		setPositionX(destX);
+		col = newCol;
+		isMoveCol = false;
+		//this->unschedule(schedule_selector(Star::moveCol));
+	}
 }
 
 /*void Star::moveStar()
@@ -156,4 +195,10 @@ const Vec2& Star::getStartPos()
 	auto size = this->getContentSize();
 
 	return Vec2(col*size.width + size.width / 2, row*size.height + size.height / 2);
+}
+
+void Star::starEnter()
+{
+	speedX = speedY = 20;
+	this->scheduleUpdate();
 }
