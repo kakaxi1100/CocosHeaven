@@ -7,3 +7,15 @@ Popstar/proj.win8.1-universal/
 Popstar/proj.win32/
 Popstar/.cocos-project.json
 Popstar/CMakeLists.txt
+
+CatWar/cocos2d/
+CatWar/proj.android/
+CatWar/proj.ios_mac/
+CatWar/proj.linux/
+CatWar/proj.win8.1-universal/
+CatWar/proj.win32/*.*
+!CatWar/proj.win32/*.cpp
+!CatWar/proj.win32/*.h
+
+CatWar/.cocos-project.json
+CatWar/CMakeLists.txt
