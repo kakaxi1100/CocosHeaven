@@ -9,5 +9,7 @@ class MenuLayer :
 public:
 	CREATE_FUNC(MenuLayer);
 	virtual bool init();
+
+	void startGame();
 };
 

@@ -12,6 +12,6 @@ bool MenuScene::init()
 	MenuLayer* menuLayer = MenuLayer::create();
 	menuLayer->setPosition(visiableSize.width / 2, visiableSize.height / 2);
 	addChild(menuLayer);
-	
+
 	return true;
 }
