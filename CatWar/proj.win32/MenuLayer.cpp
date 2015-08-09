@@ -8,7 +8,7 @@ bool MenuLayer::init()
 	}
 
 	auto visualSize = Director::getInstance()->getVisibleSize();
-
+	log("{ %f , %f }", visualSize.width, visualSize.height);
 	Sprite* menuBG = Sprite::create("bg.png");
 	addChild(menuBG);
 
@@ -20,12 +20,17 @@ bool MenuLayer::init()
 	title2->setPosition(title1->getPositionX(), title1->getPositionY() - title1->getContentSize().height/2);
 	addChild(title2);
 
-	MenuItemImage* mii = MenuItemImage::create("newgameA.png", "newgameB.png", CC_CALLBACK_0(MenuLayer::startGame, this));
+	MenuItemImage* mNew = MenuItemImage::create("newgameA.png", "newgameB.png", CC_CALLBACK_0(MenuLayer::startGame, this));
+	MenuItemImage* mContiue = MenuItemImage::create("continueA.png", "continueB.png");
+	MenuItemImage* mAbout = MenuItemImage::create("aboutA.png","aboutB.png");
 
-	/*Menu* m = Menu::create();
-	LayerColor* lc = LayerColor::create(Color4B(255, 0, 0, 255), 100, 100);
-	m->addChild(lc);
-	addChild(m);*/
+	Menu* m = Menu::create();
+	m->setPosition(Vec2::ZERO);
+	m->addChild(mNew);
+	m->addChild(mContiue);
+	m->addChild(mAbout);
+	m->alignItemsVerticallyWithPadding(50);
+	addChild(m);
 
 	return true;
 }
@@ -33,5 +38,5 @@ bool MenuLayer::init()
 void MenuLayer::startGame()
 {
 	log("Game Started!");
-	//Director::getInstance()->replaceScene();
+	Director::getInstance()->replaceScene(GameScene::create());
 }
