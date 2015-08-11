@@ -2,10 +2,9 @@
 #include "../cocos2d.h"
 
 USING_NS_CC;
-using namespace std::placeholders;
 
 class Cat :
-	public Node
+	public Sprite
 {
 public:
 	CREATE_FUNC(Cat);

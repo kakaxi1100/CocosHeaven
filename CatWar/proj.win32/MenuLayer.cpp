@@ -32,6 +32,8 @@ bool MenuLayer::init()
 	m->alignItemsVerticallyWithPadding(50);
 	addChild(m);
 
+	//log("{ %f , %f }", this->getBoundingBox().size.width, this->getBoundingBox().size.height);
+
 	return true;
 }
 

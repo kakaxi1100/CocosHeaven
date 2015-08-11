@@ -13,5 +13,7 @@ bool MenuScene::init()
 	menuLayer->setPosition(visiableSize.width / 2, visiableSize.height / 2);
 	addChild(menuLayer);
 
+	//log("{ %f , %f }", this->getBoundingBox().size.width, this->getBoundingBox().size.height);
+
 	return true;
 }
