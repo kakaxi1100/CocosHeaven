@@ -1,6 +1,7 @@
 #pragma once
 #include "../cocos2d.h"
 #include "Cat.h"
+#include "Dog.h"
 
 USING_NS_CC;
 
@@ -11,5 +12,7 @@ public:
 	CREATE_FUNC(GameLayer);
 
 	virtual bool init();
+
+	virtual void update(float delta);
 };
 

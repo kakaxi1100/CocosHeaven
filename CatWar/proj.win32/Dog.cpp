@@ -21,8 +21,9 @@ void Dog::display()
 	bodyAni->addSpriteFrameWithFile("DrDog1.png");
 	bodyAni->addSpriteFrameWithFile("DrDog2.png");
 	bodyAni->setLoops(-1);
-	bodyAni->setDelayPerUnit(0.1f);
+	bodyAni->setDelayPerUnit(0.2f);
 
 	Animate* bodyAct = Animate::create(bodyAni);
-
+	addChild(body);
+	body->runAction(bodyAct);
 }

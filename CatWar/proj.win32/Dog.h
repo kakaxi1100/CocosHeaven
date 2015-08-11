@@ -11,6 +11,7 @@ public:
 
 	virtual bool init();
 
+private:
 	void display();
 };
 

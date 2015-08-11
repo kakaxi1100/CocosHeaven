@@ -11,5 +11,14 @@ bool GameLayer::init()
 	cat->setPosition(200, 400);
 	addChild(cat);
 
+	Dog* dog = Dog::create();
+	dog->setPosition(300, 600);
+	addChild(dog);
+
 	return true;
+}
+
+void GameLayer::update(float delta)
+{
+	
 }

@@ -8,7 +8,6 @@ bool Cat::init()
 	}
 
 	display();
-	initEvent();
 
 	return true;
 }
@@ -59,11 +58,6 @@ void Cat::display()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, body);
 }
 
-void Cat::initEvent()
-{
-	
-}
-
 bool Cat::onTouchBegan(Touch* touch, Event* event)
 {
 	Point pos = touch->getLocation();//取得点击时的坐标点，GL坐标
@@ -95,3 +89,14 @@ void Cat::onTouchEnd(Touch* touch, Event* event)
 {
 	
 }
+
+void Cat::setBullet(IBullet* pBullet)
+{
+
+}
+
+void Cat::excute()
+{
+
+}
+
