@@ -7,7 +7,8 @@ bool GameLayer::init()
 		return false;
 	}
 
-	Cat* cat = Cat::create();
+	cat = Cat::create();
+	cat->setBullet(1);
 	cat->setPosition(200, 400);
 	addChild(cat);
 
@@ -15,10 +16,14 @@ bool GameLayer::init()
 	dog->setPosition(300, 600);
 	addChild(dog);
 
+	this->scheduleUpdate();
+
 	return true;
 }
 
 void GameLayer::update(float delta)
 {
-	
+	cat->excute();
+
+	BulletManager::update();
 }

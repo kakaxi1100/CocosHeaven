@@ -7,6 +7,8 @@ bool Cat::init()
 		return false;
 	}
 
+	bulletDelay = 0;
+
 	display();
 
 	return true;
@@ -90,13 +92,18 @@ void Cat::onTouchEnd(Touch* touch, Event* event)
 	
 }
 
-void Cat::setBullet(IBullet* pBullet)
+void Cat::setBullet(int pBulletType)
 {
-
+	bulletType = pBulletType;
 }
 
 void Cat::excute()
 {
-
+	if (bulletDelay <= 0)
+	{
+		BulletManager::addBullet(bulletType);
+		bulletDelay = 60;
+	}
+	bulletDelay--;
 }
 
