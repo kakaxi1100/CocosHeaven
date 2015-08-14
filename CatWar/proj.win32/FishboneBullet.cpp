@@ -6,13 +6,23 @@ bool FishboneBullet::init()
 	{
 		return false;
 	}
+
+	Sprite* display = Sprite::create("YuGuZD.png");
+	addChild(display);
+
 	return true;
+}
+
+void FishboneBullet::bulletRelease()
+{
+	this->release();
 }
 
 void FishboneBullet::excute()
 {
-	log("biubiubiubiubiubiubiuibu~~~");
 	//throw std::logic_error("The method or operation is not implemented.");
+
+	this->setPositionY(this->getPositionY() + 1);
 }
 
 int FishboneBullet::getID()

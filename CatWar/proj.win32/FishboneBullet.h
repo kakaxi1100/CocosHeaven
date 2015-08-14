@@ -15,6 +15,7 @@ public:
 	virtual bool init();
 
 	void excute() override;
+	void bulletRelease() override;
 	int getID() override;
 	void setID(int value) override;
 private:

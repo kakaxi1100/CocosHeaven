@@ -12,6 +12,7 @@ void BulletManager::addBullet(int type)
 	case 1:
 	{
 		FishboneBullet* fishbone = FishboneBullet::create();
+		//GameScene::getGameLayer()->addChild(fishbone);
 		pBullet = fishbone;//static_cast<FishboneBullet*>(FishboneBullet::create());
 		fishbone->retain();
 	}
@@ -19,13 +20,20 @@ void BulletManager::addBullet(int type)
 	default:
 		break;
 	}
-	bulletsMap[++validID] =  pBullet;
+
+	if (pBullet != nullptr)
+	{
+		int tempID = ++validID;
+		pBullet->setID(tempID);
+		bulletsMap[tempID] =  pBullet;
+	}
 }
 
 void BulletManager::deleteBullet(int pID)
 {
 	if (hasBullet(pID))
 	{
+		bulletsMap[pID]->bulletRelease();
 		bulletsMap.erase(pID);
 	}
 }

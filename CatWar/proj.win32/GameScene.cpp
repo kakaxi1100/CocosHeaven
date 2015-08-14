@@ -1,5 +1,6 @@
 #include "GameScene.h"
 
+GameLayer* GameScene::gameLayer = NULL;
 
 bool GameScene::init()
 {
@@ -8,8 +9,13 @@ bool GameScene::init()
 		return false;
 	}
 
-	GameLayer* gamelayer = GameLayer::create();
-	addChild(gamelayer);
+	gameLayer = GameLayer::create();
+	addChild(gameLayer);
 
 	return true;
+}
+
+GameLayer* GameScene::getGameLayer()
+{
+	return gameLayer;
 }

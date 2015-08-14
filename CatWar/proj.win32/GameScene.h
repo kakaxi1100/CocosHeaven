@@ -10,5 +10,9 @@ class GameScene :
 public:
 	CREATE_FUNC(GameScene);
 	virtual bool init();
+
+	static GameLayer* getGameLayer();
+private:
+	static GameLayer* gameLayer;
 };
 
