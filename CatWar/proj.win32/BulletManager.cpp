@@ -1,9 +1,10 @@
 #include "BulletManager.h"
+#include "GameLayer.h"
 
 int BulletManager::validID = 0;
 unordered_map<int, IBullet*> BulletManager::bulletsMap;
 
-void BulletManager::addBullet(int type)
+void BulletManager::addBullet(int type, float x, float y)
 {
 	IBullet* pBullet = NULL;
 
@@ -12,7 +13,8 @@ void BulletManager::addBullet(int type)
 	case 1:
 	{
 		FishboneBullet* fishbone = FishboneBullet::create();
-		//GameScene::getGameLayer()->addChild(fishbone);
+		fishbone->setPosition(x, y);
+		GameScene::getGameLayer()->addChild(fishbone);
 		pBullet = fishbone;//static_cast<FishboneBullet*>(FishboneBullet::create());
 		fishbone->retain();
 	}

@@ -3,9 +3,10 @@
 #include "IBullet.h"
 #include "FishboneBullet.h"
 #include <unordered_map>
-//#include "GameScene.h"
+#include "GameScene.h"
 
 using namespace std;
+
 
 class BulletManager
 {
@@ -13,7 +14,7 @@ public:
 	BulletManager() = default;
 	~BulletManager() = default;
 
-	static void addBullet(int type);
+	static void addBullet(int type, float x, float y);
 	static void deleteBullet(int pID);
 	static IBullet* getBullet(int pID);
 	static bool hasBullet(int pID);

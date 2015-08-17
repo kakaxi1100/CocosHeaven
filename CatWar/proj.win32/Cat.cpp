@@ -101,8 +101,8 @@ void Cat::excute()
 {
 	if (bulletDelay <= 0)
 	{
-		BulletManager::addBullet(bulletType);
-		bulletDelay = 60;
+		BulletManager::addBullet(bulletType, this->getPositionX(), this->getPositionY());
+		bulletDelay = 30;
 	}
 	bulletDelay--;
 }

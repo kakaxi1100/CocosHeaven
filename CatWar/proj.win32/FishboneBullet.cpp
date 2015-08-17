@@ -22,7 +22,7 @@ void FishboneBullet::excute()
 {
 	//throw std::logic_error("The method or operation is not implemented.");
 
-	this->setPositionY(this->getPositionY() + 1);
+	this->setPositionY(this->getPositionY() + 5);
 }
 
 int FishboneBullet::getID()

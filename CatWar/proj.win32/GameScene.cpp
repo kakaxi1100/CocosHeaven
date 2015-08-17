@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "GameLayer.h"
 
 GameLayer* GameScene::gameLayer = NULL;
 
