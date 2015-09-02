@@ -10,15 +10,12 @@ bool FishboneBullet::init()
 	Sprite* display = Sprite::create("YuGuZD.png");
 	addChild(display);
 
+	hitRect = display->getBoundingBox();
+
 	return true;
 }
 
-void FishboneBullet::bulletRelease()
-{
-	this->release();
-}
-
-void FishboneBullet::excute()
+void FishboneBullet::execute()
 {
 	//throw std::logic_error("The method or operation is not implemented.");
 
@@ -33,4 +30,9 @@ int FishboneBullet::getID()
 void FishboneBullet::setID(int value)
 {
 	id = value;
+}
+
+Rect FishboneBullet::getHitRect()
+{
+	return hitRect;
 }

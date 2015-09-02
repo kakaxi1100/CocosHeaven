@@ -1,24 +1,22 @@
 #pragma once
 
-#include "IBullet.h"
-
 #include "../cocos2d.h"
 
 USING_NS_CC;
 
 class FishboneBullet :
-	public Node, public IBullet
+	public Node
 {
 public:
 	CREATE_FUNC(FishboneBullet);
 
 	virtual bool init();
-
-	void excute() override;
-	void bulletRelease() override;
-	int getID() override;
-	void setID(int value) override;
+	int getID();
+	void setID(int value);
+	void execute();
+	Rect getHitRect();
 private:
 	int id;
+	Rect hitRect;
 };
 

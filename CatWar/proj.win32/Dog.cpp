@@ -7,6 +7,8 @@ bool Dog::init()
 		return false;
 	}
 
+	bulletDelay = 0;
+
 	display();
 
 	return true;
@@ -15,7 +17,7 @@ bool Dog::init()
 void Dog::display()
 {
 	//body
-	Sprite* body = Sprite::create("DrDog1.png");
+	body = Sprite::create("DrDog1.png");
 	
 	Animation* bodyAni = Animation::create();
 	bodyAni->addSpriteFrameWithFile("DrDog1.png");
@@ -26,4 +28,63 @@ void Dog::display()
 	Animate* bodyAct = Animate::create(bodyAni);
 	addChild(body);
 	body->runAction(bodyAct);
+
+	hitRect = body->getBoundingBox();
+}
+
+void Dog::execute()
+{
+	//产生子弹
+	if (bulletDelay <= 0)
+	{
+		TubeBullet* tube = TubeBullet::create();
+		tube->setID(GameData::getAvailableID());
+		bullets.insert(tube->getID(), tube);
+		tube->setPosition(this->getPosition());
+		if (this->getParent() != nullptr)
+		{
+			this->getParent()->addChild(tube);
+		}
+
+		bulletDelay = 50;
+	}
+	bulletDelay--;
+
+	//子弹运行
+	for (auto it = bullets.begin(); it != bullets.end();)
+	{
+		it->second->execute();
+		//判断子弹是否已经超出范围
+		if (it->second->getPositionY() < 0)
+		{
+			log("Dog :: { %d }", it->second->getID());
+			TubeBullet* temp = bullets.at(it->first);
+			auto parent = temp->getParent();
+			if (parent != NULL)
+			{
+				parent->removeChild(temp, true);
+			}
+			//下一个迭代器定位的元素位置
+			it = bullets.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+}
+
+void Dog::distroy()
+{
+	this->removeChild(body, true);
+}
+
+void Dog::displayExplode()
+{
+
+}
+
+Rect Dog::getHitRect()
+{
+	return hitRect;
 }

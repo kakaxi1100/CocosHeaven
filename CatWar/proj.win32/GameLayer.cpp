@@ -8,11 +8,10 @@ bool GameLayer::init()
 	}
 
 	cat = Cat::create();
-	cat->setBullet(1);
 	cat->setPosition(200, 400);
 	addChild(cat);
 
-	Dog* dog = Dog::create();
+	dog = Dog::create();
 	dog->setPosition(300, 600);
 	addChild(dog);
 
@@ -23,7 +22,8 @@ bool GameLayer::init()
 
 void GameLayer::update(float delta)
 {
-	cat->excute();
+	cat->execute();
+	cat->hitDog(dog);
 
-	BulletManager::update();
+	dog->execute();
 }

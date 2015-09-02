@@ -1,4 +1,5 @@
 #include "Cat.h"
+#include "Dog.h"
 
 bool Cat::init()
 {
@@ -52,7 +53,11 @@ void Cat::display()
 	rightHand->setPosition(18, -20);
 	addChild(rightHand);
 
+	hitRect = body->getBoundingBox();
+
 	EventListenerTouchOneByOne* listener = EventListenerTouchOneByOne::create();
+	//注意绑定的用法，要传入this指针作为第一个参数
+	//这个可以实现完美的事件机制！！！
 	listener->onTouchBegan = CC_CALLBACK_2(Cat::onTouchBegan, this);//std::bind(&Cat::onTouchBegan,this, _1, _2);
 	listener->onTouchMoved = CC_CALLBACK_2(Cat::onTouchMove, this);
 	listener->onTouchEnded = CC_CALLBACK_2(Cat::onTouchEnd, this);
@@ -92,18 +97,96 @@ void Cat::onTouchEnd(Touch* touch, Event* event)
 	
 }
 
-void Cat::setBullet(int pBulletType)
+void Cat::execute()
 {
-	bulletType = pBulletType;
-}
-
-void Cat::excute()
-{
+	//产生子弹
 	if (bulletDelay <= 0)
 	{
-		BulletManager::addBullet(bulletType, this->getPositionX(), this->getPositionY());
-		bulletDelay = 30;
+		FishboneBullet* fish = FishboneBullet::create();
+		fish->setID(GameData::getAvailableID());
+		bullets.insert(fish->getID(), fish);
+		fish->setPosition(this->getPosition());
+		if (this->getParent() != nullptr)
+		{
+			this->getParent()->addChild(fish);
+		}
+
+		bulletDelay = 50;
 	}
 	bulletDelay--;
+
+	//子弹运行
+	for (auto  it = bullets.begin(); it != bullets.end();)
+	{
+		it->second->execute();
+		//判断子弹是否已经超出范围
+		Size visualSize = Director::getInstance()->getVisibleSize();
+		if (it->second->getPositionY() > visualSize.height)
+		{
+			log("Cat :: { %d }", it->second->getID());
+			FishboneBullet* temp = bullets.at(it->first);
+			auto parent = temp->getParent();
+			if (parent != NULL)
+			{
+				parent->removeChild(temp, true);
+			}
+			//下一个迭代器定位的元素位置
+			it = bullets.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+
+
+	//这里不能在循环内简单的这样使用erase ，具体原因请查看 C++ primer 关联容器一章
+	/*for (auto &p : bullets)
+	{
+		p.second->execute();
+		//判断子弹是否已经超出范围
+		Size visualSize = Director::getInstance()->getVisibleSize();
+		if (p.second->getPositionY() > visualSize.height)
+		{
+			log("{ %d }", p.second->getID());
+			FishboneBullet* temp = bullets.at(p.first);
+			auto parent = temp->getParent();
+			if (parent != NULL)
+			{
+				parent->removeChild(temp);
+			}
+			bullets.erase(p.first);
+			//temp->getParent()->removeChild(temp, true);
+		}
+	}*/
+}
+
+void Cat::hitDog(Dog* dog)
+{
+	//是否砸到狗
+	for (auto it = bullets.begin(); it != bullets.end();)
+	{
+		if (it->second->getHitRect().intersectsRect(dog->getHitRect()))
+		{
+			log("Cat :: { %d }", it->second->getID());
+			FishboneBullet* temp = bullets.at(it->first);
+			auto parent = temp->getParent();
+			if (parent != NULL)
+			{
+				parent->removeChild(temp, true);
+			}
+			//下一个迭代器定位的元素位置
+			it = bullets.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+}
+
+Rect Cat::getHitRect()
+{
+	return hitRect;
 }
 

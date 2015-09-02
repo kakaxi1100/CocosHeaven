@@ -1,7 +1,9 @@
 #pragma once
 #include "../cocos2d.h"
-#include "IBullet.h"
-#include "BulletManager.h"
+#include "FishboneBullet.h"
+#include "GameData.h"
+
+class Dog;
 
 USING_NS_CC;
 using namespace std;
@@ -12,15 +14,16 @@ public:
 	CREATE_FUNC(Cat);
 	virtual bool init();
 
-	void setBullet(int pBulletType);
-
 	bool onTouchBegan(Touch* touch , Event* event);
 	void onTouchMove(Touch* touch, Event* event);
 	void onTouchEnd(Touch* touch, Event* event);
 
-	void excute();
+	void hitDog(Dog* dog);
+	void execute();
+
+	Rect getHitRect();
 private:
-	int bulletType;
+	Rect hitRect;
 	int bulletDelay;
 
 	Sprite* leftHand;
@@ -28,6 +31,6 @@ private:
 
 	void display();
 
-
+	Map<int, FishboneBullet*> bullets;	
 };
 

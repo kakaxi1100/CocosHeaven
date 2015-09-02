@@ -2,7 +2,6 @@
 #include "../cocos2d.h"
 #include "Cat.h"
 #include "Dog.h"
-#include "BulletManager.h"
 
 USING_NS_CC;
 
@@ -17,5 +16,6 @@ public:
 	virtual void update(float delta);
 private:
 	Cat* cat;
+	Dog* dog;
 };
 
