@@ -29,6 +29,18 @@ void Dog::display()
 	addChild(body);
 	body->runAction(bodyAct);
 
+	//explode
+	explode = Sprite::create("boom1.png");
+	Animation* explodeAnimation = Animation::create();
+	explodeAnimation->addSpriteFrameWithFile("boom1.png");
+	explodeAnimation->addSpriteFrameWithFile("boom2.png");
+	explodeAnimation->addSpriteFrameWithFile("boom3.png");
+	explodeAnimation->addSpriteFrameWithFile("boom4.png");
+	explodeAnimation->addSpriteFrameWithFile("boom5.png");
+	explodeAnimation->setDelayPerUnit(0.2f);
+
+	explodeAni = Animate::create(explodeAnimation);
+
 	hitRect = body->getBoundingBox();
 }
 

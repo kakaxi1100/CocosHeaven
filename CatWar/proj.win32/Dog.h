@@ -26,7 +26,7 @@ private:
 
 	Sprite* body;
 	Sprite* explode;
-
+	Animate* explodeAni;
 	Map<int, TubeBullet*> bullets;
 };
 
