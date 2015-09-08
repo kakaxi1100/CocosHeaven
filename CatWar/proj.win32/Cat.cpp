@@ -166,15 +166,20 @@ void Cat::hitDog(Dog* dog)
 	//是否砸到狗
 	for (auto it = bullets.begin(); it != bullets.end();)
 	{
-		if (it->second->getHitRect().intersectsRect(dog->getHitRect()))
+		Rect temp1 = Rect(it->second->getPositionX(), it->second->getPositionY(), it->second->getHitRect().size.width, it->second->getHitRect().size.height);
+		Rect temp2 = Rect(dog->getPositionX(), dog->getPositionY(), dog->getHitRect().size.width, dog->getHitRect().size.height);
+
+		if (temp1.intersectsRect(temp2))
 		{
-			log("Cat :: { %d }", it->second->getID());
+			log("Cat Hit:: { %d }", it->second->getID());
 			FishboneBullet* temp = bullets.at(it->first);
 			auto parent = temp->getParent();
 			if (parent != NULL)
 			{
 				parent->removeChild(temp, true);
 			}
+			//狗狗爆炸
+			
 			//下一个迭代器定位的元素位置
 			it = bullets.erase(it);
 		}

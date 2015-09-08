@@ -10,9 +10,11 @@ Popstar/CMakeLists.txt
 
 CatWar/cocos2d/
 CatWar/proj.android/
+CatWar/proj.android-studio/
 CatWar/proj.ios_mac/
 CatWar/proj.linux/
 CatWar/proj.win8.1-universal/
+CatWar/proj.win10/
 CatWar/proj.win32/*.*
 !CatWar/proj.win32/*.cpp
 !CatWar/proj.win32/*.h
