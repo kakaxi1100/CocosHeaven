@@ -87,6 +87,7 @@ void Dog::distroy()
 	this->removeChild(explode, true);
 	this->hitRect = Rect::ZERO;
 	log("Dog %d Crashed!!", 1);
+	NotificationCenter::getInstance()->postNotification("test", NULL);
 }
 
 void Dog::displayExplode()

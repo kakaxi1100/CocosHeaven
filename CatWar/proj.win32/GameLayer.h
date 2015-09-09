@@ -15,6 +15,7 @@ public:
 
 	virtual void update(float delta);
 private:
+	void testMsg(Ref* pData);
 	Cat* cat;
 	Dog* dog;
 };

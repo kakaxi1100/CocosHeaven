@@ -17,8 +17,11 @@ bool GameLayer::init()
 
 	this->scheduleUpdate();
 
+	NotificationCenter::getInstance()->addObserver(this, CC_CALLFUNCO_SELECTOR(GameLayer::testMsg), "test", NULL);
+
 	return true;
 }
+
 
 void GameLayer::update(float delta)
 {
@@ -26,4 +29,9 @@ void GameLayer::update(float delta)
 	cat->hitDog(dog);
 
 	dog->execute();
+}
+
+void GameLayer::testMsg(Ref* pData)
+{
+	log("Recive!!!");
 }
