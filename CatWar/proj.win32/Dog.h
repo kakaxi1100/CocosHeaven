@@ -16,17 +16,18 @@ public:
 	void execute();
 
 	Rect getHitRect();
+	void displayExplode();
 private:
 	int bulletDelay;
 	Rect hitRect;
 
 	void display();
 	void distroy();
-	void displayExplode();
 
 	Sprite* body;
 	Sprite* explode;
-	Animate* explodeAni;
+	Sequence* actions;
+
 	Map<int, TubeBullet*> bullets;
 };
 

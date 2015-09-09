@@ -31,21 +31,15 @@ void Dog::display()
 
 	//explode
 	explode = Sprite::create("boom1.png");
-	Animation* explodeAnimation = Animation::create();
-	explodeAnimation->addSpriteFrameWithFile("boom1.png");
-	explodeAnimation->addSpriteFrameWithFile("boom2.png");
-	explodeAnimation->addSpriteFrameWithFile("boom3.png");
-	explodeAnimation->addSpriteFrameWithFile("boom4.png");
-	explodeAnimation->addSpriteFrameWithFile("boom5.png");
-	explodeAnimation->setDelayPerUnit(0.2f);
-
-	explodeAni = Animate::create(explodeAnimation);
+	explode->setVisible(false);
+	addChild(explode);
 
 	hitRect = body->getBoundingBox();
 }
 
 void Dog::execute()
 {
+#if 0
 	//²úÉú×Óµ¯
 	if (bulletDelay <= 0)
 	{
@@ -84,16 +78,37 @@ void Dog::execute()
 			it++;
 		}
 	}
+#endif
 }
 
 void Dog::distroy()
 {
 	this->removeChild(body, true);
+	this->removeChild(explode, true);
+	this->hitRect = Rect::ZERO;
+	log("Dog %d Crashed!!", 1);
 }
 
 void Dog::displayExplode()
 {
+	this->stopAllActions();
+	Animation* explodeAnimation = Animation::create();
+	char name[20];
+	for (int i = 1; i <= 5; i++)
+	{
+		sprintf(name, "boom%d.png", i);
+		explodeAnimation->addSpriteFrameWithFile(name);
+	}
+	explodeAnimation->setDelayPerUnit(0.2f);
 
+	Animate* explodeAni = Animate::create(explodeAnimation);
+
+	CallFunc* callFunc = CallFunc::create([&]()->void {distroy(); });
+
+	actions = Sequence::create(explodeAni, callFunc, NULL);
+
+	explode->setVisible(true);
+	explode->runAction(actions);
 }
 
 Rect Dog::getHitRect()

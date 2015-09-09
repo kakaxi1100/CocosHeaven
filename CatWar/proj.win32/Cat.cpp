@@ -179,7 +179,7 @@ void Cat::hitDog(Dog* dog)
 				parent->removeChild(temp, true);
 			}
 			//狗狗爆炸
-			
+			dog->displayExplode();
 			//下一个迭代器定位的元素位置
 			it = bullets.erase(it);
 		}
