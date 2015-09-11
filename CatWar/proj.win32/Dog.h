@@ -17,14 +17,24 @@ public:
 
 	Rect getHitRect();
 	void displayExplode();
+
+	virtual void onExit();
+
+	int getID();
+	void setID(int value);
 private:
+	int id;
+	bool isReady;
 	int bulletDelay;
 	Rect hitRect;
 
 	void display();
 	void distroy();
+	void born();
 
 	Sprite* body;
+	Animate* bodyAct;
+
 	Sprite* explode;
 	Sequence* actions;
 

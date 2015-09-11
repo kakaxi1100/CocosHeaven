@@ -8,7 +8,7 @@ bool Dog::init()
 	}
 
 	bulletDelay = 0;
-
+	isReady = false;
 	display();
 
 	return true;
@@ -25,21 +25,43 @@ void Dog::display()
 	bodyAni->setLoops(-1);
 	bodyAni->setDelayPerUnit(0.2f);
 
-	Animate* bodyAct = Animate::create(bodyAni);
+	bodyAct = Animate::create(bodyAni);
+	bodyAct->retain();
 	addChild(body);
-	body->runAction(bodyAct);
+
 
 	//explode
 	explode = Sprite::create("boom1.png");
-	explode->setVisible(false);
 	addChild(explode);
 
+	Animation* explodeAnimation = Animation::create();
+	char name[20];
+	for (int i = 1; i <= 5; i++)
+	{
+		sprintf(name, "boom%d.png", i);
+		explodeAnimation->addSpriteFrameWithFile(name);
+	}
+	explodeAnimation->setDelayPerUnit(0.2f);
+
+	Animate* explodeAni = Animate::create(explodeAnimation);
+
+	CallFunc* callFunc = CallFunc::create([&]()->void {distroy(); });
+
+	actions = Sequence::create(explodeAni, callFunc, NULL);
+	actions->retain();
+
 	hitRect = body->getBoundingBox();
+
+	born();
 }
 
 void Dog::execute()
 {
 #if 0
+	if (!isReady)
+	{
+		return;
+	}
 	//²úÉú×Óµ¯
 	if (bulletDelay <= 0)
 	{
@@ -83,33 +105,52 @@ void Dog::execute()
 
 void Dog::distroy()
 {
-	this->removeChild(body, true);
-	this->removeChild(explode, true);
-	this->hitRect = Rect::ZERO;
-	log("Dog %d Crashed!!", 1);
+	body->setVisible(false);
+	body->stopAllActions();
+	explode->setVisible(false);
+	explode->stopAllActions();
+	isReady = false;
+	log("Dog %d Crashed!!", id);
+	born();
 	NotificationCenter::getInstance()->postNotification("test", NULL);
+}
+
+void Dog::born()
+{
+	//reset
+	body->setVisible(true);
+	body->runAction(bodyAct);
+	explode->setVisible(false);
+	isReady = true;
+
+	Size visualSize = Director::getInstance()->getVisibleSize();
+	int type = random(0, 4);
 }
 
 void Dog::displayExplode()
 {
-	this->stopAllActions();
-	Animation* explodeAnimation = Animation::create();
-	char name[20];
-	for (int i = 1; i <= 5; i++)
-	{
-		sprintf(name, "boom%d.png", i);
-		explodeAnimation->addSpriteFrameWithFile(name);
-	}
-	explodeAnimation->setDelayPerUnit(0.2f);
-
-	Animate* explodeAni = Animate::create(explodeAnimation);
-
-	CallFunc* callFunc = CallFunc::create([&]()->void {distroy(); });
-
-	actions = Sequence::create(explodeAni, callFunc, NULL);
+	/*this->stopAllActions();*/
 
 	explode->setVisible(true);
 	explode->runAction(actions);
+}
+
+void Dog::onExit()
+{
+	Node::onExit();
+
+	CC_SAFE_RELEASE(actions);
+	CC_SAFE_RELEASE(bodyAct);
+}
+
+int Dog::getID()
+{
+	return id;
+}
+
+void Dog::setID(int value)
+{
+	id = value;
 }
 
 Rect Dog::getHitRect()
