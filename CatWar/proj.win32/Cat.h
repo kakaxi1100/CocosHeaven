@@ -8,7 +8,7 @@ class Dog;
 USING_NS_CC;
 using namespace std;
 class Cat :
-	public Sprite
+	public Node
 {
 public:
 	CREATE_FUNC(Cat);
@@ -22,6 +22,9 @@ public:
 	void execute();
 
 	Rect getHitRect();
+
+	/*Rect temp1;
+	Rect temp2;*/
 private:
 	Rect hitRect;
 	int bulletDelay;

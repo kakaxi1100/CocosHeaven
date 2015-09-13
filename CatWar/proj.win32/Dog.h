@@ -22,6 +22,8 @@ public:
 
 	int getID();
 	void setID(int value);
+
+	bool getReady();
 private:
 	int id;
 	bool isReady;
@@ -31,6 +33,7 @@ private:
 	void display();
 	void distroy();
 	void born();
+	void move();
 
 	Sprite* body;
 	Animate* bodyAct;

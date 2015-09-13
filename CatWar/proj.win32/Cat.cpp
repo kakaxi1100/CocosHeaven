@@ -3,7 +3,7 @@
 
 bool Cat::init()
 {
-	if (!Sprite::init())
+	if (!Node::init())
 	{
 		return false;
 	}
@@ -11,6 +11,9 @@ bool Cat::init()
 	bulletDelay = 0;
 
 	display();
+
+	/*temp1 = Rect::ZERO;
+	temp2 = Rect::ZERO;*/
 
 	return true;
 }
@@ -69,10 +72,11 @@ bool Cat::onTouchBegan(Touch* touch, Event* event)
 {
 	Point pos = touch->getLocation();//取得点击时的坐标点，GL坐标
 	pos = this->convertToNodeSpace(pos);//转化为节点坐标系
-	auto target = (Sprite*)event->getCurrentTarget();
+	auto target = (Sprite*)event->getCurrentTarget();//小猫咪
 	log("{ %f , %f }", pos.x, pos.y);
 	Rect rect = target->getBoundingBox();
 	log("{ %f, %f, %f, %f }", rect.getMinX(), rect.getMaxY(), rect.size.width, rect.size.height);
+
 	if (target->getBoundingBox().containsPoint(pos))
 	{
 		log("Touch it!!!");
@@ -88,8 +92,12 @@ bool Cat::onTouchBegan(Touch* touch, Event* event)
 
 void Cat::onTouchMove(Touch* touch, Event* event)
 {
-	this->setPosition(this->getParent()->convertToNodeSpace(touch->getLocation()));
-		
+	if (this->getPositionY() >= 320)
+	{
+		this->setPositionY(320);
+		return;
+	}
+	this->setPosition(this->getParent()->convertToNodeSpace(touch->getLocation()));		
 }
 
 void Cat::onTouchEnd(Touch* touch, Event* event)
@@ -111,7 +119,7 @@ void Cat::execute()
 			this->getParent()->addChild(fish);
 		}
 
-		bulletDelay = 50;
+		bulletDelay = 100;
 	}
 	bulletDelay--;
 
@@ -164,10 +172,20 @@ void Cat::execute()
 void Cat::hitDog(Dog* dog)
 {
 	//是否砸到狗
+	if (dog->getReady() == false)
+	{
+		return;
+	}
 	for (auto it = bullets.begin(); it != bullets.end();)
 	{
-		Rect temp1 = Rect(it->second->getPositionX(), it->second->getPositionY(), it->second->getHitRect().size.width, it->second->getHitRect().size.height);
-		Rect temp2 = Rect(dog->getPositionX(), dog->getPositionY(), dog->getHitRect().size.width, dog->getHitRect().size.height);
+		FishboneBullet* temp = it->second;
+		Rect temp1 = Rect(temp->getPositionX() - temp->getHitRect().size.width/2, 
+			temp->getPositionY() - temp->getHitRect().size.height/2, 
+			temp->getHitRect().size.width, temp->getHitRect().size.height);
+
+		Rect temp2 = Rect(dog->getPositionX() - dog->getHitRect().size.width / 2, 
+			dog->getPositionY() - dog->getHitRect().size.height / 2, 
+			dog->getHitRect().size.width, dog->getHitRect().size.height);
 
 		if (temp1.intersectsRect(temp2))
 		{

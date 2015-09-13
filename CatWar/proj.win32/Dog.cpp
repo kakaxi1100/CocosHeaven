@@ -52,6 +52,15 @@ void Dog::display()
 
 	hitRect = body->getBoundingBox();
 
+	/*DrawNode* draw = DrawNode::create();
+	this->addChild(draw);
+	Vec2 point1[4];
+	point1[0] = Point(hitRect.getMinX(), hitRect.getMaxY());
+	point1[1] = Point(hitRect.getMaxX(), hitRect.getMaxY());
+	point1[2] = Point(hitRect.getMaxX(), hitRect.getMinY());
+	point1[3] = Point(hitRect.getMinX(), hitRect.getMinY());
+	draw->drawPolygon(point1, 4, Color4F(1,0,0,0), 1, Color4F(1,0,0,1));*/
+
 	born();
 }
 
@@ -103,15 +112,26 @@ void Dog::execute()
 #endif
 }
 
+void Dog::displayExplode()
+{
+	log("Dog creash !!");
+#if 0
+	this->stopAllActions();
+	body->stopAllActions();
+	isReady = false;
+	explode->setVisible(true);
+	explode->runAction(actions);
+#endif
+}
+
 void Dog::distroy()
 {
 	body->setVisible(false);
-	body->stopAllActions();
 	explode->setVisible(false);
 	explode->stopAllActions();
-	isReady = false;
+
 	log("Dog %d Crashed!!", id);
-	born();
+	//born();
 	NotificationCenter::getInstance()->postNotification("test", NULL);
 }
 
@@ -122,17 +142,50 @@ void Dog::born()
 	body->runAction(bodyAct);
 	explode->setVisible(false);
 	isReady = true;
-
 	Size visualSize = Director::getInstance()->getVisibleSize();
-	int type = random(0, 4);
+	this->setPosition(visualSize.width/4, visualSize.height + 50);
+	//move();
 }
 
-void Dog::displayExplode()
+void Dog::move()
 {
-	/*this->stopAllActions();*/
+	Size visualSize = Director::getInstance()->getVisibleSize();
+	int type = random(0, 1);
+	ccBezierConfig bezier1;
+	bezier1.controlPoint_1 = Point(this->getPositionX() - 400, 330);
+	bezier1.controlPoint_2 = Point(this->getPositionX() + 400, 280);
+	bezier1.endPosition = Point(random(0.0f, visualSize.width), random(700.0f, visualSize.height));
+	BezierTo* bezierTo1 = BezierTo::create(6.0f, bezier1);
 
-	explode->setVisible(true);
-	explode->runAction(actions);
+	ccBezierConfig bezier2;
+	bezier2.controlPoint_1 = Point(this->getPositionX() + 400, 330);
+	bezier2.controlPoint_2 = Point(this->getPositionX() - 400, 280);
+	bezier2.endPosition = Point(random(0.0f, visualSize.width), random(700.0f, visualSize.height));
+	BezierTo* bezierTo2 = BezierTo::create(6.0f, bezier2);
+
+	MoveTo* moveTo = MoveTo::create(6, Point(random(0.0f, visualSize.width), random(700.0f, visualSize.height)));
+
+	CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Dog::move, this));
+	Sequence* seq;
+	switch (type)
+	{
+	case 0:
+	{
+		seq = Sequence::create(bezierTo1, callfunc, NULL);
+	}
+		break;
+	case 1:
+	{
+		seq = Sequence::create(bezierTo2, callfunc, NULL);
+	}
+		break;
+	case 2:
+	{
+		seq = Sequence::create(moveTo, callfunc, NULL);
+	}
+		break;
+	}
+	this->runAction(seq);
 }
 
 void Dog::onExit()
@@ -156,4 +209,9 @@ void Dog::setID(int value)
 Rect Dog::getHitRect()
 {
 	return hitRect;
+}
+
+bool Dog::getReady()
+{
+	return isReady;
 }
