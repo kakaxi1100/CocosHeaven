@@ -1,4 +1,5 @@
 #include "Dog.h"
+#include "Cat.h"
 
 bool Dog::init()
 {
@@ -66,13 +67,8 @@ void Dog::display()
 
 void Dog::execute()
 {
-#if 0
-	if (!isReady)
-	{
-		return;
-	}
 	//产生子弹
-	if (bulletDelay <= 0)
+	if (bulletDelay <= 0 && isReady)
 	{
 		TubeBullet* tube = TubeBullet::create();
 		tube->setID(GameData::getAvailableID());
@@ -109,19 +105,16 @@ void Dog::execute()
 			it++;
 		}
 	}
-#endif
 }
 
 void Dog::displayExplode()
 {
-	log("Dog creash !!");
-#if 0
+	log("Dog creash !!", getID());
 	this->stopAllActions();
 	body->stopAllActions();
 	isReady = false;
 	explode->setVisible(true);
 	explode->runAction(actions);
-#endif
 }
 
 void Dog::distroy()
@@ -131,7 +124,7 @@ void Dog::distroy()
 	explode->stopAllActions();
 
 	log("Dog %d Crashed!!", id);
-	//born();
+	born();
 	NotificationCenter::getInstance()->postNotification("test", NULL);
 }
 
@@ -144,7 +137,7 @@ void Dog::born()
 	isReady = true;
 	Size visualSize = Director::getInstance()->getVisibleSize();
 	this->setPosition(visualSize.width/4, visualSize.height + 50);
-	//move();
+	move();
 }
 
 void Dog::move()
@@ -186,6 +179,45 @@ void Dog::move()
 		break;
 	}
 	this->runAction(seq);
+}
+
+void Dog::hitCat(Cat* cat)
+{
+	//是否砸到猫
+	if (cat->getReady() == false)
+	{
+		return;
+	}
+	for (auto it = bullets.begin(); it != bullets.end();)
+	{
+		TubeBullet* temp = it->second;
+		Rect temp1 = Rect(temp->getPositionX() - temp->getHitRect().size.width / 2,
+			temp->getPositionY() - temp->getHitRect().size.height / 2,
+			temp->getHitRect().size.width, temp->getHitRect().size.height);
+
+		Rect temp2 = Rect(cat->getPositionX() - cat->getHitRect().size.width / 2,
+			cat->getPositionY() - cat->getHitRect().size.height / 2,
+			cat->getHitRect().size.width, cat->getHitRect().size.height);
+
+		if (temp1.intersectsRect(temp2))
+		{
+			log("Dog Hit:: { %d }", it->second->getID());
+			TubeBullet* temp = bullets.at(it->first);
+			auto parent = temp->getParent();
+			if (parent != NULL)
+			{
+				parent->removeChild(temp, true);
+			}
+			//狗狗爆炸
+			cat->displayExplode();
+			//下一个迭代器定位的元素位置
+			it = bullets.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
 }
 
 void Dog::onExit()

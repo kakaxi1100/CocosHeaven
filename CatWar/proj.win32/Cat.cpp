@@ -9,8 +9,10 @@ bool Cat::init()
 	}
 
 	bulletDelay = 0;
+	isReady = false;
 
 	display();
+	born();
 
 	/*temp1 = Rect::ZERO;
 	temp2 = Rect::ZERO;*/
@@ -68,8 +70,35 @@ void Cat::display()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, body);
 }
 
+bool Cat::getReady()
+{
+	return isReady;
+}
+
+void Cat::setReady(bool value)
+{
+	isReady = value;
+}
+
+void Cat::born()
+{
+	Size visualSize = Director::getInstance()->getVisibleSize();
+	this->setPosition(visualSize.width/2, -70);
+
+	MoveTo* moveTo = MoveTo::create(3.0f, Point(this->getPositionX(), 100));	
+
+	CallFunc* callfun = CallFunc::create([&]()->void { this->setReady(true); });
+	Sequence* seq = Sequence::create(moveTo, callfun, NULL);
+
+	this->runAction(seq);
+}
+
 bool Cat::onTouchBegan(Touch* touch, Event* event)
 {
+	if (!isReady)
+	{
+		return false;
+	}
 	Point pos = touch->getLocation();//取得点击时的坐标点，GL坐标
 	pos = this->convertToNodeSpace(pos);//转化为节点坐标系
 	auto target = (Sprite*)event->getCurrentTarget();//小猫咪
@@ -108,7 +137,7 @@ void Cat::onTouchEnd(Touch* touch, Event* event)
 void Cat::execute()
 {
 	//产生子弹
-	if (bulletDelay <= 0)
+	if (bulletDelay <= 0 && isReady)
 	{
 		FishboneBullet* fish = FishboneBullet::create();
 		fish->setID(GameData::getAvailableID());
@@ -211,5 +240,10 @@ void Cat::hitDog(Dog* dog)
 Rect Cat::getHitRect()
 {
 	return hitRect;
+}
+
+void Cat::displayExplode()
+{
+
 }
 

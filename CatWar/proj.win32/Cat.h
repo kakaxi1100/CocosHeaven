@@ -22,10 +22,13 @@ public:
 	void execute();
 
 	Rect getHitRect();
-
+	void displayExplode();
+	bool getReady();
+	void setReady(bool value);
 	/*Rect temp1;
 	Rect temp2;*/
 private:
+	bool isReady;
 	Rect hitRect;
 	int bulletDelay;
 
@@ -33,6 +36,7 @@ private:
 	Sprite* rightHand;
 
 	void display();
+	void born();
 
 	Map<int, FishboneBullet*> bullets;	
 };

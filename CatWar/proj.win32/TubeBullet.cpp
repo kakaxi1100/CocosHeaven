@@ -28,7 +28,7 @@ void TubeBullet::setID(int value)
 
 void TubeBullet::execute()
 {
-	this->setPositionY(this->getPositionY() - 5);
+	this->setPositionY(this->getPositionY() - 8);
 }
 
 Rect TubeBullet::getHitRect()

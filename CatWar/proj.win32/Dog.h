@@ -5,6 +5,8 @@
 
 USING_NS_CC;
 
+class Cat;
+
 class Dog :
 	public Node
 {
@@ -34,6 +36,7 @@ private:
 	void distroy();
 	void born();
 	void move();
+	void hitCat(Cat * cat);
 
 	Sprite* body;
 	Animate* bodyAct;

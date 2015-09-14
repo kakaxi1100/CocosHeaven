@@ -8,11 +8,10 @@ bool GameLayer::init()
 	}
 
 	cat = Cat::create();
-	cat->setPosition(200, 100);
+	//cat->setPosition(200, 100);
 	addChild(cat);
 
 	dog = Dog::create();
-	dog->setPosition(200, 720);
 	addChild(dog);
 
 	this->scheduleUpdate();
@@ -31,7 +30,7 @@ void GameLayer::update(float delta)
 	cat->execute();
 	cat->hitDog(dog);
 
-	//dog->execute();
+	dog->execute();
 
 	/*draw->clear();
 	Vec2 point1[4];
