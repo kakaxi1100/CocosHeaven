@@ -85,10 +85,15 @@ void Cat::born()
 	Size visualSize = Director::getInstance()->getVisibleSize();
 	this->setPosition(visualSize.width/2, -70);
 
-	MoveTo* moveTo = MoveTo::create(3.0f, Point(this->getPositionX(), 100));	
+	MoveTo* moveTo = MoveTo::create(1.0f, Point(this->getPositionX(), 200));	
+	EaseOut* easeOut = EaseOut::create(moveTo, 2.0f);
+
+	Blink* blink = Blink::create(1.0f, 10);
 
 	CallFunc* callfun = CallFunc::create([&]()->void { this->setReady(true); });
-	Sequence* seq = Sequence::create(moveTo, callfun, NULL);
+
+	Spawn* spq = Spawn::create(easeOut, blink, NULL);
+	Sequence* seq = Sequence::create(spq, callfun, NULL);
 
 	this->runAction(seq);
 }
