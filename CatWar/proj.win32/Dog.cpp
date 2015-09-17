@@ -136,7 +136,7 @@ void Dog::born()
 	explode->setVisible(false);
 	isReady = true;
 	Size visualSize = Director::getInstance()->getVisibleSize();
-	this->setPosition(visualSize.width/4, visualSize.height + 50);
+	this->setPosition(random(100.0f, visualSize.width - 100), random(visualSize.height + 50, visualSize.height + 500));
 	move();
 }
 
@@ -208,7 +208,7 @@ void Dog::hitCat(Cat* cat)
 			{
 				parent->removeChild(temp, true);
 			}
-			//狗狗爆炸
+			//猫咪爆炸
 			cat->displayExplode();
 			//下一个迭代器定位的元素位置
 			it = bullets.erase(it);

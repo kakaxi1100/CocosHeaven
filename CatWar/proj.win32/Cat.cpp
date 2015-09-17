@@ -20,31 +20,38 @@ bool Cat::init()
 	return true;
 }
 
+void Cat::onExit()
+{
+	Node::onExit();
+	CC_SAFE_RELEASE(bodyAct);
+	CC_SAFE_RELEASE(tailAct);
+	CC_SAFE_RELEASE(actions);
+}
+
 void Cat::display()
 {
 	//body
-	Sprite* body = Sprite::create("catBody1.png");
+	body = Sprite::create("catBody1.png");
 	Animation* animation = Animation::create();
 	animation->addSpriteFrameWithFile("catBody1.png");
 	animation->addSpriteFrameWithFile("catBody2-4.png");
 	animation->addSpriteFrameWithFile("catBody3.png");
 	animation->setDelayPerUnit(0.1f);
 	animation->setLoops(-1);
-	Animate* bodyAct = Animate::create(animation);
+	bodyAct = Animate::create(animation);
+	bodyAct->retain();
 	addChild(body);
-	body->runAction(bodyAct);
 
 	//tail
-	Sprite* tail = Sprite::create("catTail.png");
+	tail = Sprite::create("catTail.png");
 	tail->setAnchorPoint(Point(0.5, 1));
 	tail->setScale(0.3f);
 	tail->setPosition(0,-30);
 	/*RotateBy* rotateBy = RotateBy::create(0.5f, 30);
 	RepeatForever* rotateForever = RepeatForever::create(rotateBy);*/
-	RepeatForever* tailAct = RepeatForever::create(Sequence::create(RotateBy::create(0.5f, 40), RotateBy::create(0.5f, -40), nullptr));
-
+	tailAct = RepeatForever::create(Sequence::create(RotateBy::create(0.5f, 40), RotateBy::create(0.5f, -40), nullptr));
+	tailAct->retain();
 	addChild(tail);
-	tail->runAction(tailAct);
 
 	//left hand
 	leftHand = Sprite::create("catHand1.png");
@@ -57,6 +64,27 @@ void Cat::display()
 	rightHand->setAnchorPoint(Point(0, 0.5));
 	rightHand->setPosition(18, -20);
 	addChild(rightHand);
+
+	//explode
+	explode = Sprite::create("boom1.png");
+	addChild(explode);
+
+	Animation* explodeAnimation = Animation::create();
+	char name[20];
+	for (int i = 1; i <= 5; i++)
+	{
+		sprintf(name, "boom%d.png", i);
+		explodeAnimation->addSpriteFrameWithFile(name);
+	}
+	explodeAnimation->setDelayPerUnit(0.2f);
+
+	Animate* explodeAni = Animate::create(explodeAnimation);
+
+	CallFunc* callFunc = CallFunc::create([&]()->void {distroy(); });
+
+	actions = Sequence::create(explodeAni, callFunc, NULL);
+	actions->retain();
+
 
 	hitRect = body->getBoundingBox();
 
@@ -75,13 +103,20 @@ bool Cat::getReady()
 	return isReady;
 }
 
-void Cat::setReady(bool value)
-{
-	isReady = value;
-}
-
 void Cat::born()
 {
+	body->setVisible(true);
+	body->runAction(bodyAct);
+	
+	tail->setVisible(true);
+	tail->runAction(tailAct);
+
+	rightHand->setVisible(true);
+	leftHand->setVisible(true);
+
+	explode->setVisible(false);
+	explode->stopAllActions();
+
 	Size visualSize = Director::getInstance()->getVisibleSize();
 	this->setPosition(visualSize.width/2, -70);
 
@@ -90,7 +125,7 @@ void Cat::born()
 
 	Blink* blink = Blink::create(1.0f, 10);
 
-	CallFunc* callfun = CallFunc::create([&]()->void { this->setReady(true); });
+	CallFunc* callfun = CallFunc::create([&]()->void { isReady = true; });
 
 	Spawn* spq = Spawn::create(easeOut, blink, NULL);
 	Sequence* seq = Sequence::create(spq, callfun, NULL);
@@ -126,6 +161,10 @@ bool Cat::onTouchBegan(Touch* touch, Event* event)
 
 void Cat::onTouchMove(Touch* touch, Event* event)
 {
+	if (!isReady)
+	{
+		return;
+	}
 	if (this->getPositionY() >= 320)
 	{
 		this->setPositionY(320);
@@ -249,6 +288,22 @@ Rect Cat::getHitRect()
 
 void Cat::displayExplode()
 {
+	log("Cat creash !!");
+	isReady = false;
 
+	this->stopAllActions();
+	body->stopAllActions();
+	tail->stopAllActions();
+
+	explode->setVisible(true);
+	explode->runAction(actions);
 }
 
+void Cat::distroy()
+{
+	body->setVisible(false);
+	tail->setVisible(false);
+	rightHand->setVisible(false);
+	leftHand->setVisible(false);
+	born();
+}

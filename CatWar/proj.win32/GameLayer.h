@@ -1,5 +1,6 @@
 #pragma once
 #include "../cocos2d.h"
+#include "BackgroudLayer.h"
 #include "Cat.h"
 #include "Dog.h"
 
@@ -19,6 +20,8 @@ private:
 	//DrawNode* draw;
 	void testMsg(Ref* pData);
 	Cat* cat;
-	Dog* dog;
+	Map<int, Dog*> dogs;
+
+	BackgroudLayer* bgLayer;
 };
 

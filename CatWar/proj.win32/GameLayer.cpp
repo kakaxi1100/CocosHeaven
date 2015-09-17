@@ -7,12 +7,21 @@ bool GameLayer::init()
 		return false;
 	}
 
+	bgLayer = BackgroudLayer::create();
+	addChild(bgLayer);
+
 	cat = Cat::create();
 	//cat->setPosition(200, 100);
 	addChild(cat);
 
-	dog = Dog::create();
-	addChild(dog);
+	for (size_t i = 0; i < 3; i++)
+	{
+
+		Dog* dog = Dog::create();
+		dog->setID(GameData::getAvailableID());
+		dogs.insert(dog->getID(), dog);
+		addChild(dog);
+	}
 
 	this->scheduleUpdate();
 
@@ -27,10 +36,18 @@ bool GameLayer::init()
 
 void GameLayer::update(float delta)
 {
-	cat->execute();
-	cat->hitDog(dog);
+	bgLayer->execute();
 
-	dog->execute();
+	cat->execute();
+	for (auto &p : dogs)
+	{
+		cat->hitDog(p.second);
+		p.second->execute();
+		p.second->hitCat(cat);
+	}
+
+	/*dog->execute();
+	dog->hitCat(cat);*/
 
 	/*draw->clear();
 	Vec2 point1[4];

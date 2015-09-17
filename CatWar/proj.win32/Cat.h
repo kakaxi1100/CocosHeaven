@@ -13,6 +13,7 @@ class Cat :
 public:
 	CREATE_FUNC(Cat);
 	virtual bool init();
+	virtual void onExit();
 
 	bool onTouchBegan(Touch* touch , Event* event);
 	void onTouchMove(Touch* touch, Event* event);
@@ -37,6 +38,16 @@ private:
 
 	void display();
 	void born();
+	void distroy();
+
+	Sprite* body;
+	Animate* bodyAct;
+
+	Sprite* tail;
+	RepeatForever* tailAct;
+
+	Sprite* explode;
+	Sequence* actions;
 
 	Map<int, FishboneBullet*> bullets;	
 };

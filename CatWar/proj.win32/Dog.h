@@ -26,6 +26,7 @@ public:
 	void setID(int value);
 
 	bool getReady();
+	void hitCat(Cat * cat);
 private:
 	int id;
 	bool isReady;
@@ -36,7 +37,6 @@ private:
 	void distroy();
 	void born();
 	void move();
-	void hitCat(Cat * cat);
 
 	Sprite* body;
 	Animate* bodyAct;
