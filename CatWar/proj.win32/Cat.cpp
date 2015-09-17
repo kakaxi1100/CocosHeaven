@@ -10,6 +10,7 @@ bool Cat::init()
 
 	bulletDelay = 0;
 	isReady = false;
+	isDead = false;
 
 	display();
 	born();
@@ -105,6 +106,7 @@ bool Cat::getReady()
 
 void Cat::born()
 {
+	isDead = false;
 	body->setVisible(true);
 	body->runAction(bodyAct);
 	
@@ -135,7 +137,7 @@ void Cat::born()
 
 bool Cat::onTouchBegan(Touch* touch, Event* event)
 {
-	if (!isReady)
+	if (isDead == true)
 	{
 		return false;
 	}
@@ -161,14 +163,14 @@ bool Cat::onTouchBegan(Touch* touch, Event* event)
 
 void Cat::onTouchMove(Touch* touch, Event* event)
 {
-	if (!isReady)
+	if (isDead == true)
 	{
 		return;
 	}
+
 	if (this->getPositionY() >= 320)
 	{
 		this->setPositionY(320);
-		return;
 	}
 	this->setPosition(this->getParent()->convertToNodeSpace(touch->getLocation()));		
 }
@@ -290,6 +292,7 @@ void Cat::displayExplode()
 {
 	log("Cat creash !!");
 	isReady = false;
+	isDead = true;
 
 	this->stopAllActions();
 	body->stopAllActions();

@@ -30,6 +30,7 @@ public:
 	Rect temp2;*/
 private:
 	bool isReady;
+	bool isDead;
 	Rect hitRect;
 	int bulletDelay;
 
