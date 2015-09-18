@@ -24,9 +24,16 @@ bool Cat::init()
 void Cat::onExit()
 {
 	Node::onExit();
+	this->stopAllActions();
+	body->stopAllActions();
+	tail->stopAllActions();
+	explode->stopAllActions();
+
 	CC_SAFE_RELEASE(bodyAct);
 	CC_SAFE_RELEASE(tailAct);
 	CC_SAFE_RELEASE(actions);
+
+	_eventDispatcher->removeEventListenersForTarget(this);
 }
 
 void Cat::display()
@@ -143,10 +150,16 @@ bool Cat::onTouchBegan(Touch* touch, Event* event)
 	}
 	Point pos = touch->getLocation();//取得点击时的坐标点，GL坐标
 	pos = this->convertToNodeSpace(pos);//转化为节点坐标系
+	if (pos.y > 320)
+	{
+		return false;
+	}
+
 	auto target = (Sprite*)event->getCurrentTarget();//小猫咪
 	log("{ %f , %f }", pos.x, pos.y);
 	Rect rect = target->getBoundingBox();
 	log("{ %f, %f, %f, %f }", rect.getMinX(), rect.getMaxY(), rect.size.width, rect.size.height);
+
 
 	if (target->getBoundingBox().containsPoint(pos))
 	{
@@ -168,11 +181,17 @@ void Cat::onTouchMove(Touch* touch, Event* event)
 		return;
 	}
 
-	if (this->getPositionY() >= 320)
+	Vec2 crtPt = this->getParent()->convertToNodeSpace(touch->getLocation());
+
+	if (crtPt.y >= 320)
 	{
 		this->setPositionY(320);
+		this->setPositionX(crtPt.x);
 	}
-	this->setPosition(this->getParent()->convertToNodeSpace(touch->getLocation()));		
+	else 
+	{
+		this->setPosition(crtPt);
+	}
 }
 
 void Cat::onTouchEnd(Touch* touch, Event* event)

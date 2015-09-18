@@ -25,8 +25,15 @@ bool GameLayer::init()
 
 	this->scheduleUpdate();
 
-	NotificationCenter::getInstance()->addObserver(this, CC_CALLFUNCO_SELECTOR(GameLayer::testMsg), "test", NULL);
+	NotificationCenter::getInstance()->addObserver(this, CC_CALLFUNCO_SELECTOR(GameLayer::ShowGameOver), "GameOver", NULL);
 
+	uiLayer = UILayer::create();
+	addChild(uiLayer);
+
+
+	gameOverLayer = GameOverLayer::create();
+	gameOverLayer->setVisible(false);
+	addChild(gameOverLayer);
 
 	/*draw = DrawNode::create();
 	addChild(draw);*/
@@ -65,7 +72,16 @@ void GameLayer::update(float delta)
 	draw->drawPolygon(point2, 4, Color4F(0, 1, 0, 0), 1, Color4F(0, 1, 0, 1));*/
 }
 
-void GameLayer::testMsg(Ref* pData)
+void GameLayer::onExit()
 {
-	log("Recive!!!");
+	Layer::onExit();
+	NotificationCenter::getInstance()->removeAllObservers(this);
+
+}
+
+void GameLayer::ShowGameOver(Ref * pData)
+{
+	log("GameOver!");
+	this->unscheduleUpdate();
+	gameOverLayer->setVisible(true);
 }

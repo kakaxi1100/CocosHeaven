@@ -125,7 +125,7 @@ void Dog::distroy()
 
 	log("Dog %d Crashed!!", id);
 	born();
-	NotificationCenter::getInstance()->postNotification("test", NULL);
+	//NotificationCenter::getInstance()->postNotification("test", NULL);
 }
 
 void Dog::born()
@@ -210,6 +210,7 @@ void Dog::hitCat(Cat* cat)
 			}
 			//猫咪爆炸
 			cat->displayExplode();
+			NotificationCenter::getInstance()->postNotification("HitCat");
 			//下一个迭代器定位的元素位置
 			it = bullets.erase(it);
 		}

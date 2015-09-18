@@ -10,5 +10,10 @@ public:
 	CREATE_FUNC(UILayer);
 
 	virtual bool init();
+	virtual void onExit();
+private:
+	int life;
+	Vector<Sprite*> lifes;
+	void cutLife(Ref * data);
 };
 
