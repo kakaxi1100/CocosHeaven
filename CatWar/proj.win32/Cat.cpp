@@ -292,6 +292,7 @@ void Cat::hitDog(Dog* dog)
 			}
 			//狗狗爆炸
 			dog->displayExplode();
+			NotificationCenter::getInstance()->postNotification("HitDog");
 			//下一个迭代器定位的元素位置
 			it = bullets.erase(it);
 		}

@@ -12,8 +12,11 @@ public:
 	virtual bool init();
 	virtual void onExit();
 private:
+	Node* score;
 	int life;
+	int scoreNum;
 	Vector<Sprite*> lifes;
 	void cutLife(Ref * data);
+	void addScore(Ref* data);
 };
 
