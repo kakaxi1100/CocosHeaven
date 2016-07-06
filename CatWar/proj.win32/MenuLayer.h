@@ -12,5 +12,8 @@ public:
 	virtual bool init();
 
 	void startGame();
+	void openSound(Ref* data);
+	MenuItemImage* mSoundOn;
+	MenuItemImage* mSoundOff;
 };
 

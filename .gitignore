@@ -9,7 +9,6 @@ Popstar/.cocos-project.json
 Popstar/CMakeLists.txt
 
 CatWar/cocos2d/
-CatWar/proj.android/
 CatWar/proj.android-studio/
 CatWar/proj.ios_mac/
 CatWar/proj.linux/

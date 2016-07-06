@@ -1,4 +1,5 @@
 #include "MenuLayer.h"
+#include "SimpleAudioEngine.h"
 
 bool MenuLayer::init()
 {
@@ -6,7 +7,8 @@ bool MenuLayer::init()
 	{
 		return false;
 	}
-
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("background.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("background.mp3", true);
 	auto visualSize = Director::getInstance()->getVisibleSize();
 	log("{ %f , %f }", visualSize.width, visualSize.height);
 	Sprite* menuBG = Sprite::create("bg.png");
@@ -33,12 +35,31 @@ bool MenuLayer::init()
 	addChild(m);
 
 	//log("{ %f , %f }", this->getBoundingBox().size.width, this->getBoundingBox().size.height);
+	mSoundOn = MenuItemImage::create("sound-on-A.png", "sound-on-B.png" ,
+		CC_CALLBACK_1(MenuLayer::openSound, this));
+	std::function<void(Ref*)> f = 
+		[&](Ref*)->void{mSoundOn->setVisible(true);
+						mSoundOff->setVisible(false); 
+						CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic(); };
+	mSoundOff = MenuItemImage::create("sound-off-A.png", "sound-off-B.png",f);
+
+	Menu* sound = Menu::create(mSoundOff, mSoundOn, NULL);
+	sound->setPosition(-220, -300);
+	addChild(sound);
 
 	return true;
 }
+
 
 void MenuLayer::startGame()
 {
 	log("Game Started!");
 	Director::getInstance()->replaceScene(GameScene::create());
+}
+
+void MenuLayer::openSound(Ref* data)
+{
+	mSoundOn->setVisible(false);
+	mSoundOff->setVisible(true);
+	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
